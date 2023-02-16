@@ -112,6 +112,7 @@ class GxEPD2
       // 7-color
       ACeP565,     Waveshare_5_65_7c = ACeP565,
       GDEY073D46
+      E2741CS0B2
     };
 };
 
