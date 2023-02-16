@@ -62,12 +62,5 @@ class GxEPD2_ist7136_COG : public GxEPD2_EPD
     void _WriteCommandData(uint8_t command, uint8_t data);
     void _WriteCommandData(uint8_t command, uint8_t *data, size_t size);
     void _WriteScreenBufferHelper(uint8_t reg, uint8_t value);
-  private:
-    static const unsigned char lut_20_LUTC_partial[];
-    static const unsigned char lut_21_LUTWW_partial[];
-    static const unsigned char lut_22_LUTKW_partial[];
-    static const unsigned char lut_23_LUTWK_partial[];
-    static const unsigned char lut_24_LUTKK_partial[];
-    static const unsigned char lut_25_LUTBD_partial[];
 };
 #endif // _GxEPD2_ist7136_COG_H_

@@ -32,28 +32,18 @@ void GxEPD2_ist7136_COG::_WriteScreenBufferHelper(uint8_t reg, uint8_t value)
 void GxEPD2_ist7136_COG::writeImage(const uint8_t bitmap[], int16_t x, int16_t y, int16_t w, int16_t h, bool invert, bool mirror_y, bool pgm)
 {
     uint16_t wb = (w + 7) / 8;                                      // width bytes, bitmaps are padded
-    x -= x % 8;                                                     // byte boundary
-    w = wb * 8;                                                     // byte boundary
-    int16_t x1 = x < 0 ? 0 : x;                                     // limit
-    int16_t y1 = y < 0 ? 0 : y;                                     // limit
-    int16_t w1 = x + w < int16_t(WIDTH) ? w : int16_t(WIDTH) - x;   // limit
-    int16_t h1 = y + h < int16_t(HEIGHT) ? h : int16_t(HEIGHT) - y; // limit
-    int16_t dx = x1 - x;
-    int16_t dy = y1 - y;
-    w1 -= dx;
-    h1 -= dy;
-    if ((w1 <= 0) || (h1 <= 0))
-        return;
+    
     
     _writeCommand(0x10);
     _startTransfer();
-    for (int16_t i = 0; i < h1; i++)
+
+    for (int16_t i = 0; i < h; i++)
     {
-        for (int16_t j = 0; j < w1 / 8; j++)
+        for (int16_t j = 0; j < w / 8; j++)
         {
             uint8_t data;
             // use wb, h of bitmap for index!
-            uint16_t idx = mirror_y ? j + dx / 8 + uint16_t((h - 1 - (i + dy))) * wb : j + dx / 8 + uint16_t(i + dy) * wb;
+            uint16_t idx = mirror_y ? j + uint16_t((h - 1 - i)) * wb : (wb - 1 - j) + i * wb;
             if (pgm)
             {
 #if defined(__AVR) || defined(ESP8266) || defined(ESP32)
