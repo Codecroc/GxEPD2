@@ -60,7 +60,9 @@ class GxEPD2_ist7136_COG : public GxEPD2_EPD
     void _reset();
     void _SoftStartDCDC();
     void _WriteCommandData(uint8_t command, uint8_t data);
-    void _WriteCommandData(uint8_t command, uint8_t *data, size_t size);
+    void _WriteCommandData(uint8_t command, const uint8_t *data, size_t size);
     void _WriteScreenBufferHelper(uint8_t reg, uint8_t value);
+
+    static const uint8_t reg12[];
 };
 #endif // _GxEPD2_ist7136_COG_H_

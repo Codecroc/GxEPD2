@@ -1,5 +1,7 @@
 #include "GxEPD2_ist7136_COG.h"
 
+const uint8_t GxEPD2_ist7136_COG::reg12[] = {0x3b, 0x00, 0x14};
+
 GxEPD2_ist7136_COG::GxEPD2_ist7136_COG(int16_t cs, int16_t dc, int16_t rst, int16_t busy) : GxEPD2_EPD(cs, dc, rst, busy, LOW, 10000000, WIDTH, HEIGHT, panel, hasColor, hasPartialUpdate, hasFastPartialUpdate)
 {
 }
@@ -14,6 +16,7 @@ void GxEPD2_ist7136_COG::clearScreen(uint8_t value)
 void GxEPD2_ist7136_COG::writeScreenBuffer(uint8_t value)
 {   
    _WriteScreenBufferHelper(0x10, value);
+   _WriteCommandData(0x12, reg12, 3);
    _WriteScreenBufferHelper(0x11, 0x00);
 }
 
@@ -63,6 +66,8 @@ void GxEPD2_ist7136_COG::writeImage(const uint8_t bitmap[], int16_t x, int16_t y
     }
     _endTransfer();
     delay(1);            // yield() to avoid WDT on ESP8266 and ESP32
+    
+    _WriteCommandData(0x12, reg12, 3);
     _WriteScreenBufferHelper(0x11, 0x00);
 
 }
@@ -170,6 +175,14 @@ void GxEPD2_ist7136_COG::_InitDisplay()
     _WriteCommandData(0x60, 0x25);
     _WriteCommandData(0x61, 0x00);
     _WriteCommandData(0x02, 0x00);
+
+    uint8_t reg13[] = {0x00, 0x3b, 0x00, 0x00, 0x1f, 0x03};
+    uint8_t reg90[] = {0x00, 0x3b, 0x00, 0xc9};
+
+    _WriteCommandData(0x13, reg13, 6);
+    _WriteCommandData(0x90, reg90, 4);
+    _WriteCommandData(0x12, reg12, 3);
+
 }
 
 void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, uint8_t data)
@@ -178,7 +191,7 @@ void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, uint8_t data)
     _writeData(data);
 }
 
-void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, uint8_t * data, size_t size)
+void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, const uint8_t * data, size_t size)
 {
     _writeCommand(command);
     _writeData(data, size);
