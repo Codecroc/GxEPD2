@@ -126,8 +126,10 @@ void GxEPD2_ist7136_COG::_PowerOff()
     {
         _waitWhileBusy("_PowerOff", power_off_time);
         _WriteCommandData(0x09,0x7f);
-        _WriteCommandData(0x05,0x7d);
-        _WriteCommandData(0x09,0x00);
+        _WriteCommandData(0x05,0x3d);
+        _WriteCommandData(0x09,0x7e);
+        delay(15);
+        _WriteCommandData(0x09, 0x00);
         _waitWhileBusy("_PowerOff", power_off_time);
         digitalWrite(_dc, LOW);
         digitalWrite(_cs, LOW);
