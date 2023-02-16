@@ -10,7 +10,6 @@ void GxEPD2_ist7136_COG::clearScreen(uint8_t value)
 {
     writeScreenBuffer();
     refresh();
-    writeScreenBuffer();
 }
 
 void GxEPD2_ist7136_COG::writeScreenBuffer(uint8_t value)
@@ -88,14 +87,10 @@ void GxEPD2_ist7136_COG::writeNative(const uint8_t *data1, const uint8_t *data2,
     }
 }
 
-void GxEPD2_ist7136_COG::get_busy_status(uint8_t busy)
-{
-    busy = digitalRead(_busy);
-}
-
 void GxEPD2_ist7136_COG::refresh(bool partial_update_mode)
 {
-    _Init_Full();
+    _InitCOG();
+    _SoftStartDCDC();
     _waitWhileBusy("refresh", _busy_timeout);
     _WriteCommandData(0x15, 0x3c);
 }
@@ -119,8 +114,7 @@ void GxEPD2_ist7136_COG::_PowerOn()
 {
     if (!_power_is_on)
     {
-        _writeCommand(0x04);
-        _waitWhileBusy("_PowerOn", power_on_time);
+      _reset();
     }
     _power_is_on = true;
 }
@@ -145,15 +139,25 @@ void GxEPD2_ist7136_COG::_PowerOff()
 
 void GxEPD2_ist7136_COG::_InitDisplay()
 {
-    if (_hibernating)
-        _reset();
+    
+    _reset();
 
+    uint8_t reg13[] = {0x00, 0x3b, 0x00, 0x00, 0x1f, 0x03};
+    uint8_t reg90[] = {0x00, 0x3b, 0x00, 0xc9};
+
+    _WriteCommandData(0x13, reg13, 6);
+    _WriteCommandData(0x90, reg90, 4);
+    _WriteCommandData(0x12, reg12, 3);
+}
+
+void GxEPD2_ist7136_COG::_InitCOG()
+{
     // Initial COG
     _WriteCommandData(0x05, 0x7d);
     delay(200);
     _WriteCommandData(0x05, 0x00);
     delay(10);
-    _WriteCommandData(0xc2, 0x3f); // values from original library maby needs to be enabled
+    _WriteCommandData(0xc2, 0x3f);
     _WriteCommandData(0xd8, 0x00);
     _WriteCommandData(0xd6, 0x00);
     _WriteCommandData(0xa7, 0x10);
@@ -175,14 +179,6 @@ void GxEPD2_ist7136_COG::_InitDisplay()
     _WriteCommandData(0x60, 0x25);
     _WriteCommandData(0x61, 0x00);
     _WriteCommandData(0x02, 0x00);
-
-    uint8_t reg13[] = {0x00, 0x3b, 0x00, 0x00, 0x1f, 0x03};
-    uint8_t reg90[] = {0x00, 0x3b, 0x00, 0xc9};
-
-    _WriteCommandData(0x13, reg13, 6);
-    _WriteCommandData(0x90, reg90, 4);
-    _WriteCommandData(0x12, reg12, 3);
-
 }
 
 void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, uint8_t data)
@@ -249,7 +245,6 @@ void GxEPD2_ist7136_COG::_Init_Full()
 {
     _InitDisplay();
     _SoftStartDCDC();
-    _PowerOn();
     _using_partial_mode = false;
 }
 
