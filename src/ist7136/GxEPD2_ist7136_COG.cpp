@@ -146,7 +146,7 @@ void GxEPD2_ist7136_COG::_InitDisplay()
     delay(200);
     _WriteCommandData(0x05, 0x00);
     delay(10);
-    //_write_command_data(0xc2, 0x3f); // values from original library maby needs to be enabled
+    _WriteCommandData(0xc2, 0x3f); // values from original library maby needs to be enabled
     _WriteCommandData(0xd8, 0x00);
     _WriteCommandData(0xd6, 0x00);
     _WriteCommandData(0xa7, 0x10);

@@ -11,13 +11,13 @@ class GxEPD2_ist7136_COG : public GxEPD2_EPD
     static const uint16_t HEIGHT = 800;
     static const GxEPD2::Panel panel = GxEPD2::E2741CS0B2;
     static const bool hasColor = false;
-    static const bool hasPartialUpdate = true;
+    static const bool hasPartialUpdate = false;
     static const bool usePartialUpdateWindow = false; // set false for better image
-    static const bool hasFastPartialUpdate = true; // set this false to force full refresh always
+    static const bool hasFastPartialUpdate = false; // set this false to force full refresh always
     static const uint16_t power_on_time = 140; // ms, e.g. 134460us
     static const uint16_t power_off_time = 42; // ms, e.g. 40033us
     static const uint16_t full_refresh_time = 4200; // ms, e.g. 4108238us
-    static const uint16_t partial_refresh_time = 1600; // ms, e.g. 1584124us
+    static const uint16_t partial_refresh_time = 0; // ms, e.g. 1584124us
     // constructor
     GxEPD2_ist7136_COG(int16_t cs, int16_t dc, int16_t rst, int16_t busy);
     // methods (virtual)
