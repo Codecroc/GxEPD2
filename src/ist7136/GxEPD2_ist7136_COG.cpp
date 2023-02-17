@@ -148,7 +148,6 @@ void GxEPD2_ist7136_COG::_InitDisplay()
     _WriteCommandData(0x13, reg13, 6);
     _WriteCommandData(0x90, reg90, 4);
     _WriteCommandData(0x12, reg12, 3);
-    _WriteCommandData(0x01, 0x08);
 }
 
 void GxEPD2_ist7136_COG::_InitCOG()
