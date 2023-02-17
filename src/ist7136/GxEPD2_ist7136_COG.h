@@ -51,12 +51,12 @@ class GxEPD2_ist7136_COG : public GxEPD2_EPD
     void refresh(int16_t x, int16_t y, int16_t w, int16_t h);
     void powerOff(); // turns off generation of panel driving voltages, avoids screen fading over time
     void hibernate(); // turns powerOff() and sets controller to deep sleep for minimum power use, ONLY if wakeable by RST (rst >= 0)
+    void get_busy_status(uint8_t busy);
   private:
     void _PowerOn();
     void _PowerOff();
     void _InitDisplay();
     void _Init_Full();
-    void _InitCOG();
     void _reset();
     void _SoftStartDCDC();
     void _WriteCommandData(uint8_t command, uint8_t data);
