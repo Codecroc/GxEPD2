@@ -15,13 +15,14 @@ void GxEPD2_ist7136_COG::clearScreen(uint8_t value)
 
 void GxEPD2_ist7136_COG::writeScreenBuffer(uint8_t value)
 {   
-   _WriteScreenBufferHelper(0x10, value);
-   _WriteCommandData(0x12, reg12, 3);
-   _WriteScreenBufferHelper(0x11, 0x00);
+    _WriteScreenBufferHelper(0x10, value);
+    _WriteCommandData(0x12, reg12, 3);
+    _WriteScreenBufferHelper(0x11, 0x00);
 }
 
 void GxEPD2_ist7136_COG::_WriteScreenBufferHelper(uint8_t reg, uint8_t value)
 {
+    value = ~value;
     _writeCommand(reg);
     _startTransfer();
     for (uint32_t i = 0; i < uint32_t(WIDTH) * uint32_t(HEIGHT) / 8; i++)
@@ -29,14 +30,13 @@ void GxEPD2_ist7136_COG::_WriteScreenBufferHelper(uint8_t reg, uint8_t value)
         _transfer(value);
     }
     _endTransfer();
-    delay(1); //yield() avoid WDT on ESP8266 and ESP32
+    delay(1); // yield() avoid WDT on ESP8266 and ESP32
 }
 
 void GxEPD2_ist7136_COG::writeImage(const uint8_t bitmap[], int16_t x, int16_t y, int16_t w, int16_t h, bool invert, bool mirror_y, bool pgm)
 {
-    uint16_t wb = (w + 7) / 8;                                      // width bytes, bitmaps are padded
-    
-    
+    uint16_t wb = (w + 7) / 8; // width bytes, bitmaps are padded
+
     _writeCommand(0x10);
     _startTransfer();
 
@@ -50,14 +50,14 @@ void GxEPD2_ist7136_COG::writeImage(const uint8_t bitmap[], int16_t x, int16_t y
             if (pgm)
             {
 #if defined(__AVR) || defined(ESP8266) || defined(ESP32)
-                data = pgm_read_byte(&bitmap[idx]);
+                data = ~pgm_read_byte(&bitmap[idx]);
 #else
                 data = bitmap[idx];
 #endif
             }
             else
             {
-                data = bitmap[idx];
+                data = ~bitmap[idx];
             }
             if (invert)
                 data = ~data;
@@ -65,11 +65,10 @@ void GxEPD2_ist7136_COG::writeImage(const uint8_t bitmap[], int16_t x, int16_t y
         }
     }
     _endTransfer();
-    delay(1);            // yield() to avoid WDT on ESP8266 and ESP32
-    
+    delay(1); // yield() to avoid WDT on ESP8266 and ESP32
+
     _WriteCommandData(0x12, reg12, 3);
     _WriteScreenBufferHelper(0x11, 0x00);
-
 }
 
 void GxEPD2_ist7136_COG::writeImage(const uint8_t *black, const uint8_t *color, int16_t x, int16_t y, int16_t w, int16_t h, bool invert, bool mirror_y, bool pgm)
@@ -130,9 +129,9 @@ void GxEPD2_ist7136_COG::_PowerOff()
     if (_power_is_on)
     {
         _waitWhileBusy("_PowerOff", power_off_time);
-        _WriteCommandData(0x09,0x7f);
-        _WriteCommandData(0x05,0x3d);
-        _WriteCommandData(0x09,0x7e);
+        _WriteCommandData(0x09, 0x7f);
+        _WriteCommandData(0x05, 0x3d);
+        _WriteCommandData(0x09, 0x7e);
         delay(15);
         _WriteCommandData(0x09, 0x00);
         _waitWhileBusy("_PowerOff", power_off_time);
@@ -161,7 +160,7 @@ void GxEPD2_ist7136_COG::_InitDisplay()
     _WriteCommandData(0xa7, 0x00);
     delay(100);
     _WriteCommandData(0x44, 0x00);
-    _WriteCommandData(0x45,0x80);
+    _WriteCommandData(0x45, 0x80);
     _WriteCommandData(0xa7, 0x10);
     delay(100);
     _WriteCommandData(0xa7, 0x00);
@@ -182,7 +181,6 @@ void GxEPD2_ist7136_COG::_InitDisplay()
     _WriteCommandData(0x13, reg13, 6);
     _WriteCommandData(0x90, reg90, 4);
     _WriteCommandData(0x12, reg12, 3);
-
 }
 
 void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, uint8_t data)
@@ -191,7 +189,7 @@ void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, uint8_t data)
     _writeData(data);
 }
 
-void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, const uint8_t * data, size_t size)
+void GxEPD2_ist7136_COG::_WriteCommandData(uint8_t command, const uint8_t *data, size_t size)
 {
     _writeCommand(command);
     _writeData(data, size);
@@ -203,8 +201,8 @@ void GxEPD2_ist7136_COG::_SoftStartDCDC()
     uint8_t reg09[] = {0x1f, 0x9f, 0x7f, 0xff};
     _WriteCommandData(0x51, &reg51[1], 2);
 
-    //First Stage
-    for(int i = 1; i <= 4; i++)
+    // First Stage
+    for (int i = 1; i <= 4; i++)
     {
         _WriteCommandData(0x09, reg09[0]);
         reg51[1] = i;
@@ -213,8 +211,8 @@ void GxEPD2_ist7136_COG::_SoftStartDCDC()
         delay(2);
     }
 
-    //Second Stage
-    for(int i = 1; i <= 10; i++)
+    // Second Stage
+    for (int i = 1; i <= 10; i++)
     {
         _WriteCommandData(0x09, reg09[0]);
         reg51[3] = i;
@@ -223,8 +221,8 @@ void GxEPD2_ist7136_COG::_SoftStartDCDC()
         delay(2);
     }
 
-    //Third Stage
-    for(int i = 3; i <= 10; i++)
+    // Third Stage
+    for (int i = 3; i <= 10; i++)
     {
         _WriteCommandData(0x09, reg09[2]);
         reg51[3] = i;
@@ -232,8 +230,8 @@ void GxEPD2_ist7136_COG::_SoftStartDCDC()
         _WriteCommandData(0x09, reg09[3]);
         delay(2);
     }
-    // Fourth Stage 
-    for(int i = 9; i >= 2; i--)
+    // Fourth Stage
+    for (int i = 9; i >= 2; i--)
     {
         _WriteCommandData(0x09, reg09[2]);
         reg51[2] = i;
@@ -253,13 +251,12 @@ void GxEPD2_ist7136_COG::_Init_Full()
     _using_partial_mode = false;
 }
 
-
 void GxEPD2_ist7136_COG::_reset()
 {
     pinMode(_rst, OUTPUT);
-    delay(200);                          // delay_ms 5ms
+    delay(200);               // delay_ms 5ms
     digitalWrite(_rst, HIGH); // RES# = 1
-    delay(20);                          // delay_ms 5ms
+    delay(20);                // delay_ms 5ms
     digitalWrite(_rst, LOW);
     delay(200);
     digitalWrite(_rst, HIGH);
