@@ -199,7 +199,9 @@
 #if __has_include("it8951/GxEPD2_it103_1872x1404.h")
 #include "it8951/GxEPD2_it103_1872x1404.h"
 #endif
+#if __has_include("ist7136/GxEPD2_ist7136_COG.h")
 #include "ist7136/GxEPD2_ist7136_COG.h"
+#endif
 
 template<typename GxEPD2_Type, const uint16_t page_height>
 class GxEPD2_BW : public GxEPD2_GFX_BASE_CLASS
