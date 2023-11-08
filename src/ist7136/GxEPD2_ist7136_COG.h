@@ -9,6 +9,7 @@ class GxEPD2_ist7136_COG : public GxEPD2_EPD
     // attributes
     static const uint16_t WIDTH = 480;
     static const uint16_t HEIGHT = 800;
+    static const uint16_t WIDTH_VISIBLE = WIDTH;
     static const GxEPD2::Panel panel = GxEPD2::E2741CS0B2;
     static const bool hasColor = false;
     static const bool hasPartialUpdate = false;
